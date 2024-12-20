@@ -1,72 +1,59 @@
-const express = require('express');
-const fs = require('fs');
-const path = require('path');
+const express = require("express");
+const mongoose = require("mongoose");
+const Expense = require("./models/expense");
 
 const app = express();
-const PORT = 3000;
-const expensesFile = path.join(__dirname, 'data', 'expenses.json');
-
-// Middleware to parse JSON request bodies
 app.use(express.json());
 
-// Route to handle root path
-app.get('/', (req, res) => {
-  res.send('Welcome to the Expense Tracker API!');
-});
 
-// Helper functions to read/write expenses data
-const readExpenses = () => JSON.parse(fs.readFileSync(expensesFile));
-const writeExpenses = (expenses) => fs.writeFileSync(expensesFile, JSON.stringify(expenses, null, 2));
+mongoose
+  .connect("mongodb://127.0.0.1:27017/expense-tracker")
+  .then(() => console.log("Connected to MongoDB"))
+  .catch((err) => console.error(err));
 
-// Route to add a new expense
-app.post('/expenses', (req, res) => {
+app.get("/", (req, res) => {
+  res.send("Welcome to the Expense Tracker API!");
+  });
+
+
+app.post("/api/expenses", async (req, res) => {
   const { description, amount, date } = req.body;
-  
-  if (!description || !amount || !date) {
-    return res.status(400).json({ message: 'Please provide description, amount, and date.' });
+
+  try {
+    const newExpense = new Expense({ description, amount, date });
+    await newExpense.save();
+    res.status(201).json(newExpense);
+  } catch (error) {
+    res.status(400).json({ error: error.message });
   }
-
-  const expenses = readExpenses();
-  const newExpense = { description, amount: parseFloat(amount), date };
-  
-  expenses.push(newExpense);
-  writeExpenses(expenses);
-  
-  res.status(201).json({ message: 'Expense added!', expense: newExpense });
 });
+app.put("/api/expenses/:id", async (req, res) => {
+  const { id } = req.params;
+  const { description, amount, date } = req.body;
 
-// Route to get total expenses for a specific period
-app.get('/expenses/total', (req, res) => {
-  const { period } = req.query;
-  const expenses = readExpenses();
-  const now = new Date();
-
-  const filterByPeriod = {
-    day: (expenseDate) => expenseDate.toDateString() === now.toDateString(),
-    week: (expenseDate) => {
-      const weekAgo = new Date();
-      weekAgo.setDate(now.getDate() - 7);
-      return expenseDate >= weekAgo && expenseDate <= now;
-    },
-    month: (expenseDate) => {
-      const monthAgo = new Date();
-      monthAgo.setMonth(now.getMonth() - 1);
-      return expenseDate >= monthAgo && expenseDate <= now;
-    }
-  };
-
-  if (!filterByPeriod[period]) {
-    return res.status(400).json({ message: 'Invalid period. Use day, week, or month.' });
+  try {
+    const updatedExpense = await Expense.findByIdAndUpdate(
+      id,
+      { description, amount, date },
+      { new: true, runValidators: true }
+    );
+    if (!updatedExpense) return res.status(404).send("Expense not found");
+    res.json(updatedExpense);
+  } catch (error) {
+    res.status(400).json({ error: error.message });
   }
-
-  const total = expenses
-    .filter(exp => filterByPeriod[period](new Date(exp.date)))
-    .reduce((sum, exp) => sum + exp.amount, 0);
-
-  res.json({ total });
 });
 
-// Start the server
-app.listen(PORT, () => {
-  console.log(`Server running on http://localhost:${PORT}`);
+app.delete("/api/expenses/:id", async (req, res) => {
+  const { id } = req.params;
+
+  try {
+    const deletedExpense = await Expense.findByIdAndDelete(id);
+    if (!deletedExpense) return res.status(404).send("Expense not found");
+    res.json({ message: "Expense deleted successfully" });
+  } catch (error) {
+    res.status(400).json({ error: error.message });
+  }
 });
+
+app.listen(3000, () => console.log("Server running on port 3000"));

@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <meta name="theme-color" content="palevioletred">
+        <title>Expense Tracker</title>
+        <style>
+            body { font-family: Arial, sans-serif; margin: 20px; }
+            h1 { text-align: center; color: palevioletred; }
+            table { width: 100%; border-collapse: collapse; margin-top: 20px; }
+            th, td { border: 1px palevioletred; padding: 8px; text-align: center; }
+            form { display: flex; gap: 10px; margin-top: 20px; }
+            input{ padding: 10px; font-size: 16px;}
+            button{ padding: 10px; font-size: 16px; color: palevioletred;}
+        </style>
+    </head>
+
+<body>
+    <h1>Expense Tracker</h1>
+    <form id="expense-form">
+        <input type="text" id="description" placeholder="Description" required>
+        <input type="number" id="amount" placeholder="Amount" required>
+        <input type="date" id="date" required>
+        <button type="submit">Add Expense</button>
+    </form>
+    <table id="expense-table">
+        <thead>
+            <tr>
+                <th>ID</th>
+                <th>Description</th>
+                <th>Amount</th>
+                <th>Date</th>
+                <th>Actions</th>
+            </tr>
+        </thead>
+        <tbody></tbody>
+    </table>
+    <script src="script.js"></script>
+</body>
+</html>
