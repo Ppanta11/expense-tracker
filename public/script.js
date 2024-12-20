@@ -1,7 +1,8 @@
 const expenseForm = document.getElementById("expense-form");
 const expenseTableBody = document.querySelector("#expense-table tbody");
+const uploadBannerForm = document.getElementById("upload-banner-form");
+const bannerImage = document.getElementById("banner-image");
 
-// Fetch and display expenses
 async function fetchExpenses() {
     const res = await fetch("/api/expenses");
     const expenses = await res.json();
@@ -20,7 +21,7 @@ async function fetchExpenses() {
         .join("");
 }
 
-// Add new expense
+
 expenseForm.addEventListener("submit", async (e) => {
     e.preventDefault();
     const description = document.getElementById("description").value;
@@ -37,11 +38,43 @@ expenseForm.addEventListener("submit", async (e) => {
     fetchExpenses();
 });
 
-// Delete expense
 async function deleteExpense(id) {
     await fetch(`/api/expenses/${id}`, { method: "DELETE" });
     fetchExpenses();
 }
 
-// Initial fetch
+uploadBannerForm.addEventListener("submit", async (e) => {
+    e.preventDefault();
+
+    const formData = new FormData();
+    const bannerImageFile = document.querySelector('input[name="bannerImage"]').files[0];
+
+    if (!bannerImageFile) {
+        alert("Please select an image to upload.");
+        return;
+    }
+
+    formData.append("bannerImage", bannerImageFile);
+
+    try {
+        const res = await fetch("/api/upload-banner", {
+            method: "POST",
+            body: formData,
+        });
+
+        if (res.ok) {
+            const data = await res.json();
+
+            bannerImage.src = data.imageUrl;
+            bannerImage.style.display = "block";
+        } else {
+            alert("Error uploading image.");
+        }
+    } catch (error) {
+        console.error("Error uploading image:", error);
+        alert("Error uploading image.");
+    }
+});
+
+
 fetchExpenses();
