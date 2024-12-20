@@ -1,21 +1,37 @@
 const express = require("express");
 const mongoose = require("mongoose");
 const Expense = require("./models/expense");
+const path = require("path");
 
 const app = express();
+
+// Serve static files from 'public' folder
+app.use(express.static(path.join(__dirname, "public")));
+
 app.use(express.json());
 
-
+// Connect to MongoDB
 mongoose
   .connect("mongodb://127.0.0.1:27017/expense-tracker")
   .then(() => console.log("Connected to MongoDB"))
   .catch((err) => console.error(err));
 
+// Root route (API base endpoint)
 app.get("/", (req, res) => {
   res.send("Welcome to the Expense Tracker API!");
-  });
+});
 
+// Fetch all expenses and send to the client
+app.get("/api/expenses", async (req, res) => {
+  try {
+    const expenses = await Expense.find();
+    res.json(expenses);
+  } catch (error) {
+    res.status(500).json({ error: error.message });
+  }
+});
 
+// Add a new expense
 app.post("/api/expenses", async (req, res) => {
   const { description, amount, date } = req.body;
 
@@ -27,6 +43,8 @@ app.post("/api/expenses", async (req, res) => {
     res.status(400).json({ error: error.message });
   }
 });
+
+// Update an existing expense
 app.put("/api/expenses/:id", async (req, res) => {
   const { id } = req.params;
   const { description, amount, date } = req.body;
@@ -44,6 +62,7 @@ app.put("/api/expenses/:id", async (req, res) => {
   }
 });
 
+// Delete an expense
 app.delete("/api/expenses/:id", async (req, res) => {
   const { id } = req.params;
 
@@ -56,4 +75,5 @@ app.delete("/api/expenses/:id", async (req, res) => {
   }
 });
 
+// Start server
 app.listen(3000, () => console.log("Server running on port 3000"));

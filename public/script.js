@@ -9,11 +9,11 @@ async function fetchExpenses() {
         .map(
             (e) => `
         <tr>
-            <td>${e.id}</td>
+            <td>${e._id}</td> <!-- Use _id here -->
             <td>${e.description}</td>
             <td>${e.amount}</td>
-            <td>${e.date}</td>
-            <td><button onclick="deleteExpense(${e.id})">Delete</button></td>
+            <td>${new Date(e.date).toLocaleDateString()}</td> <!-- Format the date -->
+            <td><button onclick="deleteExpense('${e._id}')">Delete</button></td> <!-- Use _id here as well -->
         </tr>
     `
         )
