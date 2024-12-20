@@ -8,6 +8,11 @@ The Expense Tracker is a web application built with Express.js and MongoDB. It a
 - **View Expenses**: Displays a table with the list of all expenses from the database.
 - **Update Expense**: Allows users to modify existing expenses.
 - **Delete Expense**: Provides an option to delete expenses from the database.
+- ## Image Upload Feature
+
+- **Banner Image Upload**: Users can upload a banner image via the web UI. The uploaded image is stored in the `uploads/` folder and displayed on the page.
+- **API Endpoint**: `POST /api/upload-banner` allows the uploading of banner images. The image file is stored and its path is returned in the response.
+
 
 ## Technologies Used
 - **Backend**: Express.js
