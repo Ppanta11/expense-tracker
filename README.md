@@ -22,6 +22,34 @@ The Expense Tracker is a web application built with Express.js and MongoDB. It a
 
 ## Installation
 
-1. **Clone the repository**:
-   ```bash
-   git clone https://github.com/your-username/expense-tracker.git
+##Prerequisites
+
+##Before running the application, ensure you have the following installed:
+
+Node.js
+MongoDB
+Git
+
+##Step-by-Step Guide to Run the Application
+#1. Clone the Repository
+Open your terminal and run the following command to clone the repository:
+   git clone https://github.com/Ppanta11/expense-tracker.git
+Navigate to the project directory:
+   cd expense-tracker
+#2. Install Dependencies
+Run the following command to install the required Node.js dependencies:
+   npm install
+#3. Start MongoDB
+Ensure your MongoDB service is running. Use the following command to start MongoDB if it's not already running:
+   mongod
+#4. Start the Application
+Run the following command to start the application:
+   node index.js
+You should see the following output if everything is set up correctly:
+   Server running on port 3000
+   Connected to MongoDB
+#5. Open the Application in a Browser
+Open your browser and navigate to:
+   http://localhost:3000
+
+
